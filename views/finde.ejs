@@ -1,0 +1,22 @@
+<table>
+    <tr>
+        <td></td> bsale_id </td> 
+        <td> date </td> 
+        <td> batt_value</td> 
+        <td> batt_sales</td> 
+        <td> batt_cost</td> 
+        <td> batt_bought</td> 
+    </tr> 
+    
+    <% BattCalc.forEach(function(battcalcs) { %>
+    </tr>
+        <td> <%= battcalcs.bsale_id %> </td> 
+        <td> <%= battcalcs.date %> </td>
+        <td> <%= battcalcs.batt_value %> </td> 
+        <td> <%= battcalcs.batt_sales %> </td> 
+        <td> <%= battcalcs.batt_cost %> </td> 
+        <td> <%= battcalcs.batt_bought %> </td> 
+
+    </tr>
+    <% }); %>
+</table>

@@ -1,0 +1,13 @@
+<h1> State Data</h1>
+<table>
+    <tr>
+        <td> state id</td>
+        <td> state name </td>
+    </tr>
+    <% state.forEach(function(item) { %>
+    <tr>
+        <td><%= item.stateid %> </td>
+        <td><%= item.state_name %> </td>
+    </tr>
+    <% }); %>
+</table>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<header>
+    <div class="container">
+        <div id="branding">
+          <h4> <span class="highlight">PartiFest</span> </h4>
+        </div>
+
+    </div>
+</header>
+<% include ./navlogin %>
+<section id="newsletters">
+    <div class="container">
+      <h4>Note: You can only create events in "Minesota cities" for now!!!</h4>
+    </div>
+  </section>
+
+
+<body>
+    <div class="container">
+      
+
+        
+
+        <form action="/insertme" method="POST" autocomplete="off" id="contact" enctype="multipart/form-data">
+          <h4 style="text-align: center; color: red; font-size: 15px"><%= typeof msg != 'undefined' ? msg : '' %></h4>
+          <% include ./partials/messages %>
+          
+          <% if ( success_messages !='' ) { %>
+            <div class="alert alert-success" >
+                <strong><%= success_messages %> </strong>
+            </div>
+            <% } %>
+
+          <h3>Add Your Event</h3>
+          <fieldset> Party Name (Required) <input name = "party_name" placeholder="Party Name" type="text"  required/></fieldset>
+        </br>
+          <fieldset> Address (Required) <input name = "address" placeholder="Address" type="text" required /></fieldset>
+        </br>
+          <fieldset>
+              State (Required)
+              <select id="state_name"  name="state_name" type = "text">
+              <option value="Minnesota">Minnesota</option>
+            </select>
+          </fieldset>
+        </br>
+       
+          <fieldset> City (Required)
+                    <input id="myInput" type="text" name="city_name" placeholder="Please Only Select Available Cities" required>
+                  </fieldset>
+                </br>
+
+                <script>
+                function autocomplete(inp, arr) {
+                  /*the autocomplete function takes two arguments,
+                  the text field element and an array of possible autocompleted values:*/
+                  var currentFocus;
+                  /*execute a function when someone writes in the text field:*/
+                  inp.addEventListener("input", function(e) {
+                      var a, b, i, val = this.value;
+                      /*close any already open lists of autocompleted values*/
+                      closeAllLists();
+                      if (!val) { return false;}
+                      currentFocus = -1;
+                      /*create a DIV element that will contain the items (values):*/
+                      a = document.createElement("DIV");
+                      a.setAttribute("id", this.id + "autocomplete-list");
+                      a.setAttribute("class", "autocomplete-items");
+                      /*append the DIV element as a child of the autocomplete container:*/
+                      this.parentNode.appendChild(a);
+                      /*for each item in the array...*/
+                      for (i = 0; i < arr.length; i++) {
+                        /*check if the item starts with the same letters as the text field value:*/
+                        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                          /*create a DIV element for each matching element:*/
+                          b = document.createElement("DIV");
+                          /*make the matching letters bold:*/
+                          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                          b.innerHTML += arr[i].substr(val.length);
+                          /*insert a input field that will hold the current array item's value:*/
+                          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                          /*execute a function when someone clicks on the item value (DIV element):*/
+                          b.addEventListener("click", function(e) {
+                              /*insert the value for the autocomplete text field:*/
+                              inp.value = this.getElementsByTagName("input")[0].value;
+                              /*close the list of autocompleted values,
+                              (or any other open lists of autocompleted values:*/
+                              closeAllLists();
+                          });
+                          a.appendChild(b);
+                        }
+                      }
+                  });
+                  /*execute a function presses a key on the keyboard:*/
+                  inp.addEventListener("keydown", function(e) {
+                      var x = document.getElementById(this.id + "autocomplete-list");
+                      if (x) x = x.getElementsByTagName("div");
+                      if (e.keyCode == 40) {
+                        /*If the arrow DOWN key is pressed,
+                        increase the currentFocus variable:*/
+                        currentFocus++;
+                        /*and and make the current item more visible:*/
+                        addActive(x);
+                      } else if (e.keyCode == 38) { //up
+                        /*If the arrow UP key is pressed,
+                        decrease the currentFocus variable:*/
+                        currentFocus--;
+                        /*and and make the current item more visible:*/
+                        addActive(x);
+                      } else if (e.keyCode == 13) {
+                        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                        e.preventDefault();
+                        if (currentFocus > -1) {
+                          /*and simulate a click on the "active" item:*/
+                          if (x) x[currentFocus].click();
+                        }
+                      }
+                  });
+                  function addActive(x) {
+                    /*a function to classify an item as "active":*/
+                    if (!x) return false;
+                    /*start by removing the "active" class on all items:*/
+                    removeActive(x);
+                    if (currentFocus >= x.length) currentFocus = 0;
+                    if (currentFocus < 0) currentFocus = (x.length - 1);
+                    /*add class "autocomplete-active":*/
+                    x[currentFocus].classList.add("autocomplete-active");
+                  }
+                  function removeActive(x) {
+                    /*a function to remove the "active" class from all autocomplete items:*/
+                    for (var i = 0; i < x.length; i++) {
+                      x[i].classList.remove("autocomplete-active");
+                    }
+                  }
+                  function closeAllLists(elmnt) {
+                    /*close all autocomplete lists in the document,
+                    except the one passed as an argument:*/
+                    var x = document.getElementsByClassName("autocomplete-items");
+                    for (var i = 0; i < x.length; i++) {
+                      if (elmnt != x[i] && elmnt != inp) {
+                        x[i].parentNode.removeChild(x[i]);
+                      }
+                    }
+                  }
+                  /*execute a function when someone clicks in the document:*/
+                  document.addEventListener("click", function (e) {
+                      closeAllLists(e.target);
+                  });
+                }
+                
+                /*An array containing all the country names in the world:*/
+                var countries = ['Ada',	'Adams',	'Adrian',	'Afton',	'Aitkin',	'Akeley',	'Albany',	'Alberta',	'Albert Lea',	'Albertville',	'Alden',	'Aldrich',	'Alexandria',	'Alpha',	'Altura',	'Alvarado',	'Amboy',	'Andover',	'Annandale',	'Anoka',	'Appleton',	'Apple Valley',	'Arco',	'Arden Hills',	'Argyle',	'Arlington',	'Arnold',	'Ashby',	'Askov',	'Atwater',	'Audubon',	'Aurora',	'Austin',	'Avoca',	'Avon',	'Babbitt',	'Backus',	'Badger',	'Bagley',	'Balaton',	'Barnesville',	'Barnum',	'Barrett',	'Barry',	'Battle Lake',	'Baudette',	'Baxter',	'Bayport',	'Beardsley',	'Beaver Bay',	'Beaver Creek',	'Becker',	'Bejou',	'Belgrade',	'Bellechester',	'Belle Plaine',	'Bellingham',	'Beltrami',	'Belview',	'Bemidji',	'Bena',	'Benson',	'Bertha',	'Bethel',	'Bigelow',	'Big Falls',	'Bigfork',	'Big Lake',	'Bingham Lake',	'Birchwood Village',	'Bird Island',	'Biscay',	'Biwabik',	'Blackduck',	'Blaine',	'Blomkest',	'Blooming Prairie',	'Bloomington',	'Blue Earth',	'Bluffton',	'Bock',	'Borup',	'Bovey',	'Bowlus',	'Boyd',	'Boy River',	'Braham',	'Brainerd',	'Brandon',	'Breckenridge',	'Breezy Point',	'Brewster',	'Bricelyn',	'Brooklyn Center',	'Brooklyn Park',	'Brook Park',	'Brooks',	'Brookston',	'Brooten',	'Browerville',	'Brownsdale',	'Browns Valley',	'Brownsville',	'Brownton',	'Bruno',	'Buckman',	'Buffalo',	'Buffalo Lake',	'Buhl',	'Burnsville',	'Burtrum',	'Butterfield',	'Byron',	'Caledonia',	'Callaway',	'Calumet',	'Cambridge',	'Campbell',	'Canby',	'Cannon Falls',	'Canton',	'Carlos',	'Carlton',	'Carver',	'Cass Lake',	'Cedar Mills',	'Center City',	'Centerville',	'Ceylon',	'Champlin',	'Chandler',	'Chanhassen',	'Chaska',	'Chatfield',	'Chickamaw Beach',	'Chisago City',	'Chisholm',	'Chokio',	'Circle Pines',	'Clara City',	'Claremont',	'Clarissa',	'Clarkfield',	'Clarks Grove',	'Clearbrook',	'Clear Lake',	'Clearwater',	'Clements',	'Cleveland',	'Climax',	'Clinton',	'Clitherall',	'Clontarf',	'Cloquet',	'Coates',	'Cobden',	'Cohasset',	'Cokato',	'Cold Spring',	'Coleraine',	'Cologne',	'Columbia Heights',	'Comfrey',	'Comstock',	'Conger',	'Cook',	'Coon Rapids',	'Corcoran',	'Correll',	'Cosmos',	'Cottage Grove',	'Cottonwood',	'Courtland',	'Cromwell',	'Crookston',	'Crosby',	'Crosslake',	'Crystal',	'Currie',	'Cuyuna',	'Cyrus',	'Dakota',	'Dalton',	'Danube',	'Danvers',	'Darfur',	'Darwin',	'Dassel',	'Dawson',	'Dayton',	'Deephaven',	'Deer Creek',	'Deer River',	'Deerwood',	'De Graff',	'Delano',	'Delavan',	'Delhi',	'Dellwood',	'Denham',	'Dennison',	'Dent',	'Detroit Lakes',	'Dexter',	'Dilworth',	'Dodge Center',	'Donaldson',	'Donnelly',	'Doran',	'Dover',	'Dovray',	'Duluth',	'Dumont',	'Dundas',	'Dundee',	'Dunnell',	'Eagan',	'Eagle Bend',	'Eagle Lake',	'East Bethel',	'East Grand Forks',	'East Gull Lake',	'Easton',	'Echo',	'Eden Prairie',	'Eden Valley',	'Edgerton',	'Edina',	'Effie',	'Eitzen',	'Elba',	'Elbow Lake',	'Elbow Lake',	'Elgin',	'Elizabeth',	'Elko',	'Elk River',	'Elkton',	'Ellendale',	'Ellsworth',	'Elmdale',	'Elmore',	'Elrosa',	'Ely',	'Elysian',	'Emily',	'Emmons',	'Erhard',	'Erskine',	'Evan',	'Evansville',	'Eveleth',	'Excelsior',	'Eyota',	'Fairfax',	'Fairmont',	'Falcon Heights',	'Faribault',	'Farmington',	'Farwell',	'Federal Dam',	'Felton',	'Fergus Falls',	'Fertile',	'Fifty Lakes',	'Finlayson',	'Fisher',	'Flensburg',	'Floodwood',	'Florence',	'Foley',	'Forada',	'Forest Lake',	'Foreston',	'Fort Ripley',	'Fosston',	'Fountain',	'Foxhome',	'Franklin',	'Frazee',	'Freeborn',	'Freeport',	'Fridley',	'Frost',	'Fulda',	'Funkley',	'Garfield',	'Garrison',	'Garvin',	'Gary',	'Gaylord',	'Gem Lake',	'Geneva',	'Genola',	'Georgetown',	'Ghent',	'Gibbon',	'Gilbert',	'Gilman',	'Glencoe',	'Glenville',	'Glenwood',	'Glyndon',	'Golden Valley',	'Gonvick',	'Goodhue',	'Goodridge',	'Good Thunder',	'Goodview',	'Graceville',	'Granada',	'Grand Marais',	'Grand Meadow',	'Grand Rapids',	'Granite Falls',	'Grant',	'Grasston',	'Greenbush',	'Greenfield',	'Green Isle',	'Greenwald',	'Greenwood',	'Grey Eagle',	'Grove City',	'Grygla',	'Gully',	'Hackensack',	'Hadley',	'Hallock',	'Halma',	'Halstad',	'Hamburg',	'Ham Lake',	'Hammond',	'Hampton',	'Hancock',	'Hanley Falls',	'Hanover',	'Hanska',	'Harding',	'Hardwick',	'Harmony',	'Harris',	'Hartland',	'Hastings',	'Hatfield',	'Hawley',	'Hayfield',	'Hayward',	'Hazel Run',	'Hector',	'Heidelberg',	'Henderson',	'Hendricks',	'Hendrum',	'Henning',	'Henriette',	'Herman',	'Hermantown',	'Heron Lake',	'Hewitt',	'Hibbing',	'Hill City',	'Hillman',	'Hills',	'Hilltop',	'Hinckley',	'Hitterdal',	'Hoffman',	'Hokah',	'Holdingford',	'Holland',	'Hollandale',	'Holloway',	'Holt',	'Hopkins',	'Houston',	'Howard Lake',	'Hoyt Lakes',	'Hugo',	'Humboldt',	'Hutchinson',	'Ihlen',	'Independence',	'International Falls',	'Inver Grove Heights',	'Iona',	'Iron Junction',	'Ironton',	'Isanti',	'Isle',	'Ivanhoe',	'Jackson',	'Janesville',	'Jasper',	'Jeffers',	'Jenkins',	'Johnson',	'Jordan',	'Kandiyohi',	'Karlstad',	'Kasota',	'Kasson',	'Keewatin',	'Kelliher',	'Kellogg',	'Kennedy',	'Kenneth',	'Kensington',	'Kent',	'Kenyon',	'Kerkhoven',	'Kerrick',	'Kettle River',	'Kiester',	'Kilkenny',	'Kimball',	'Kinbrae',	'Kingston',	'Kinney',	'La Crescent',	'Lafayette',	'Lake Benton',	'Lake Bronson',	'Lake City',	'Lake Crystal',	'Lake Elmo',	'Lakefield',	'Lake Henry',	'Lakeland',	'Lakeland Shores',	'Lake Lillian',	'Lake Park',	'Lake St. Croix Beach',	'Lake Shore',	'Lakeville',	'Lake Wilson',	'Lamberton',	'Lancaster',	'Landfall',	'Lanesboro',	'Laporte',	'La Prairie',	'La Salle',	'Lastrup',	'Lauderdale',	'Le Center',	'Lengby',	'Leonard',	'Leonidas',	'Leota',	'Le Roy',	'Lester Prairie',	'Le Sueur',	'Lewiston',	'Lewisville',	'Lexington',	'Lilydale',	'Lindstrom',	'Lino Lakes',	'Lismore',	'Litchfield',	'Little Canada',	'Little Falls',	'Littlefork',	'Little Rock',	'Long Beach',	'Long Lake',	'Long Prairie',	'Longville',	'Lonsdale',	'Loretto',	'Louisburg',	'Lowry',	'Lucan',	'Luverne',	'Lyle',	'Lynd',	'Mabel',	'McGrath',	'McGregor',	'McIntosh',	'McKinley',	'Madelia',	'Madison',	'Madison Lake',	'Magnolia',	'Mahnomen',	'Mahtomedi',	'Manchester',	'Manhattan Beach',	'Mankato',	'Mantorville',	'Maple Grove',	'Maple Lake',	'Maple Plain',	'Mapleton',	'Mapleview',	'Maplewood',	'Marble',	'Marietta',	'Marine on St. Croix',	'Marshall',	'Mayer',	'Maynard',	'Mazeppa',	'Meadowlands',	'Medford',	'Medicine Lake',	'Medina',	'Meire Grove',	'Melrose',	'Menahga',	'Mendota',	'Mendota Heights',	'Mentor',	'Middle River',	'Miesville',	'Milaca',	'Milan',	'Millerville',	'Millville',	'Milroy',	'Miltona',	'Minneapolis',	'Minneiska',	'Minneota',	'Minnesota City',	'Minnesota Lake',	'Minnetonka',	'Minnetonka Beach',	'Minnetrista',	'Mizpah',	'Montevideo',	'Montgomery',	'Monticello',	'Montrose',	'Moorhead',	'Moose Lake',	'Mora',	'Morgan',	'Morris',	'Morristown',	'Morton',	'Motley',	'Mound',	'Mounds View',	'Mountain Iron',	'Mountain Lake',	'Murdock',	'Myrtle',	'Nashua',	'Nashwauk',	'Nassau',	'Naytahwaush',	'Nelson',	'Nerstrand',	'Nevis',	'New Auburn',	'New Brighton',	'Newfolden',	'New Germany',	'New Hope',	'New London',	'New Market',	'New Munich',	'Newport',	'New Prague',	'New Richland',	'New Trier',	'New Ulm',	'New York Mills',	'Nicollet',	'Nielsville',	'Nimrod',	'Nisswa',	'Norcross',	'North Branch',	'Northfield',	'North Mankato',	'North Oaks',	'Northome',	'Northrop',	'North St. Paul',	'Norwood Young America',	'Oakdale',	'Oak Grove',	'Oak Park Heights',	'Oakport',	'Odessa',	'Odin',	'Ogema',	'Ogilvie',	'Okabena',	'Oklee',	'Olivia',	'Onamia',	'Ormsby',	'Orono',	'Oronoco',	'Orr',	'Ortonville',	'Osakis',	'Oslo',	'Osseo',	'Ostrander',	'Otsego',	'Ottertail',	'Owatonna',	'Palisade',	'Parkers Prairie',	'Park Rapids',	'Paynesville',	'Pease',	'Pelican Rapids',	'Pemberton',	'Pennock',	'Pequot Lakes',	'Perham',	'Perley',	'Peterson',	'Pierz',	'Pillager',	'Pine City',	'Pine Island',	'Pine Point',	'Pine River',	'Pine Springs',	'Pipestone',	'Plainview',	'Plato',	'Pleasant Lake',	'Plummer',	'Plymouth',	'Ponemah',	'Porter',	'Preston',	'Princeton',	'Prinsburg',	'Prior Lake',	'Proctor',	'Quamba',	'Racine',	'Ramsey',	'Randall',	'Randolph',	'Ranier',	'Raymond',	'Redby',	'Red Lake',	'Red Lake Falls',	'Red Wing',	'Redwood Falls',	'Regal',	'Remer',	'Renville',	'Revere',	'Rice',	'Rice Lake',	'Richfield',	'Richmond',	'Richville',	'Riverton',	'Robbinsdale',	'Rochester',	'Rock Creek',	'Rockford',	'Rockville',	'Rogers',	'Rollingstone',	'Ronneby',	'Roosevelt',	'Roscoe',	'Roseau',	'Rose Creek',	'Rosemount',	'Roseville',	'Rothsay',	'Round Lake',	'Royalton',	'Rush City',	'Rushford',	'Rushford Village',	'Rushmore',	'Russell',	'Ruthton',	'Rutledge',	'Sabin',	'Sacred Heart',	'St. Anthony city (Hennepin County)',	'St. Anthony city (Stearns County)',	'St. Bonifacius',	'St. Charles',	'St. Clair',	'St. Cloud',	'St. Francis',	'St. Hilaire',	'St. James',	'St. Joseph',	'St. Leo',	'St. Louis Park',	'St. Martin',	'St. Marys Point',	'St. Michael',	'St. Paul',	'St. Paul Park',	'St. Peter',	'St. Rosa',	'St. Stephen',	'St. Vincent',	'Sanborn',	'Sandstone',	'Sargeant',	'Sartell',	'Sauk Centre',	'Sauk Rapids',	'Savage',	'Scanlon',	'Seaforth',	'Sebeka',	'Sedan',	'Shafer',	'Shakopee',	'Shelly',	'Sherburn',	'Shevlin',	'Shoreview',	'Shorewood',	'Silver Bay',	'Silver Lake',	'Skyline',	'Slayton',	'Sleepy Eye',	'Sobieski',	'Solway',	'South Haven',	'South St. Paul',	'Spicer',	'Springfield',	'Spring Grove',	'Spring Hill',	'Spring Lake Park',	'Spring Park',	'Spring Valley',	'Squaw Lake',	'Stacy',	'Staples',	'Starbuck',	'Steen',	'Stephen',	'Stewart',	'Stewartville',	'Stillwater',	'Stockton',	'Storden',	'Strandquist',	'Strathcona',	'Sturgeon Lake',	'Sunburg',	'Sunfish Lake',	'Swanville',	'Taconite',	'Tamarack',	'Taopi',	'Taunton',	'Taylors Falls',	'Tenney',	'Tenstrike',	'The Lakes',	'Thief River Falls',	'Thomson',	'Tintah',	'Tonka Bay',	'Tower',	'Tracy',	'Trail',	'Trimont',	'Trommald',	'Trosky',	'Truman',	'Turtle River',	'Twin Lakes',	'Twin Valley',	'Two Harbors',	'Tyler',	'Ulen',	'Underwood',	'Upsala',	'Urbank',	'Utica',	'Vadnais Heights',	'Vergas',	'Vermillion',	'Verndale',	'Vernon Center',	'Vesta',	'Victoria',	'Viking',	'Villard',	'Vineland',	'Vining',	'Virginia',	'Wabasha',	'Wabasso',	'Waconia',	'Wadena',	'Wahkon',	'Waite Park',	'Waldorf',	'Walker',	'Walnut Grove',	'Walters',	'Waltham',	'Wanamingo',	'Wanda',	'Warba',	'Warren',	'Warroad',	'Waseca',	'Watertown',	'Waterville',	'Watkins',	'Watson',	'Waubun',	'Waverly',	'Wayzata',	'Welcome',	'Wells',	'Wendell',	'Westbrook',	'West Concord',	'Westport',	'West St. Paul',	'West Union',	'Whalan',	'Wheaton',	'White Bear Lake',	'White Earth',	'Wilder',	'Willernie',	'Williams',	'Willmar',	'Willow River',	'Wilmont',	'Wilton',	'Windom',	'Winger',	'Winnebago',	'Winona',	'Winsted',	'Winthrop',	'Winton',	'Wolf Lake',	'Wolverton',	'Woodbury',	'Wood Lake',	'Woodland',	'Woodstock',	'Worthington',	'Wrenshall',	'Wright',	'Wykoff',	'Wyoming',	'Zemple',	'Zimmerman',	'Zumbro Falls',	'Zumbrota'];
+                
+                /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+                autocomplete(document.getElementById("myInput"), countries);
+                </script>
+                
+                
+
+
+<fieldset>  Price (Required)
+  <input id="price" type="text" name="price" placeholder="Type Free or the Dollar Amount" required>
+</fieldset> 
+</br>
+
+
+<script>
+function autocomplete(inp, arr) {
+/*the autocomplete function takes two arguments,
+the text field element and an array of possible autocompleted values:*/
+var currentFocus;
+/*execute a function when someone writes in the text field:*/
+inp.addEventListener("input", function(e) {
+    var a, b, i, val = this.value;
+    /*close any already open lists of autocompleted values*/
+    closeAllLists();
+    if (!val) { return false;}
+    currentFocus = -1;
+    /*create a DIV element that will contain the items (values):*/
+    a = document.createElement("DIV");
+    a.setAttribute("id", this.id + "autocomplete-list");
+    a.setAttribute("class", "autocomplete-items");
+    /*append the DIV element as a child of the autocomplete container:*/
+    this.parentNode.appendChild(a);
+    /*for each item in the array...*/
+    for (i = 0; i < arr.length; i++) {
+      /*check if the item starts with the same letters as the text field value:*/
+      if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        /*create a DIV element for each matching element:*/
+        b = document.createElement("DIV");
+        /*make the matching letters bold:*/
+        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+        b.innerHTML += arr[i].substr(val.length);
+        /*insert a input field that will hold the current array item's value:*/
+        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+        /*execute a function when someone clicks on the item value (DIV element):*/
+        b.addEventListener("click", function(e) {
+            /*insert the value for the autocomplete text field:*/
+            inp.value = this.getElementsByTagName("input")[0].value;
+            /*close the list of autocompleted values,
+            (or any other open lists of autocompleted values:*/
+            closeAllLists();
+        });
+        a.appendChild(b);
+      }
+    }
+});
+/*execute a function presses a key on the keyboard:*/
+inp.addEventListener("keydown", function(e) {
+    var x = document.getElementById(this.id + "autocomplete-list");
+    if (x) x = x.getElementsByTagName("div");
+    if (e.keyCode == 40) {
+      /*If the arrow DOWN key is pressed,
+      increase the currentFocus variable:*/
+      currentFocus++;
+      /*and and make the current item more visible:*/
+      addActive(x);
+    } else if (e.keyCode == 38) { //up
+      /*If the arrow UP key is pressed,
+      decrease the currentFocus variable:*/
+      currentFocus--;
+      /*and and make the current item more visible:*/
+      addActive(x);
+    } else if (e.keyCode == 13) {
+      /*If the ENTER key is pressed, prevent the form from being submitted,*/
+      e.preventDefault();
+      if (currentFocus > -1) {
+        /*and simulate a click on the "active" item:*/
+        if (x) x[currentFocus].click();
+      }
+    }
+});
+function addActive(x) {
+  /*a function to classify an item as "active":*/
+  if (!x) return false;
+  /*start by removing the "active" class on all items:*/
+  removeActive(x);
+  if (currentFocus >= x.length) currentFocus = 0;
+  if (currentFocus < 0) currentFocus = (x.length - 1);
+  /*add class "autocomplete-active":*/
+  x[currentFocus].classList.add("autocomplete-active");
+}
+function removeActive(x) {
+  /*a function to remove the "active" class from all autocomplete items:*/
+  for (var i = 0; i < x.length; i++) {
+    x[i].classList.remove("autocomplete-active");
+  }
+}
+function closeAllLists(elmnt) {
+  /*close all autocomplete lists in the document,
+  except the one passed as an argument:*/
+  var x = document.getElementsByClassName("autocomplete-items");
+  for (var i = 0; i < x.length; i++) {
+    if (elmnt != x[i] && elmnt != inp) {
+      x[i].parentNode.removeChild(x[i]);
+    }
+  }
+}
+/*execute a function when someone clicks in the document:*/
+document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+});
+}
+
+/*An array containing all the country names in the world:*/
+var countries = ["Free"]
+/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+autocomplete(document.getElementById("price"), countries);
+</script>
+
+<div style="float:left; ">
+ Start Date (Required)
+  <input id="startDate" name="startDate"  type="date"  required/>
+</div>
+
+
+<div style="float:left; ">
+    Start Time (Required)
+    <select id="startTime" name = "startTime" type= "text" >
+        <option >12:00 am</option>
+        <option >12:30 am</option>
+        <option >1:00 am</option>
+        <option >1:30 am</option>
+        <option >2:00 am</option>
+        <option >2:30 am</option>
+        <option >3:00 am</option>
+        <option >3:30 am</option>
+        <option >4:00 am</option>
+        <option >4:30 am</option>
+        <option >5:00 am</option>
+        <option >5:30 am</option>
+        <option >6:00 am</option>
+        <option >6:30 am</option>
+        <option >7:00 am</option>
+        <option >7:30 am</option>
+        <option >8:00 am</option>
+        <option >8:30 am</option>
+        <option >9:00 am</option>
+        <option >9:30 am</option>
+        <option >10:00 am</option>
+        <option >10:30 am</option>
+        <option >11:00 am</option>
+        <option >11:30 am</option>
+        <option >12:00 pm</option>
+        <option >12:30 pm</option>
+        <option >01:00 pm</option>
+        <option >01:30 pm</option>
+        <option >02:00 pm</option>
+        <option >02:30 pm</option>
+        <option >03:00 pm</option>
+        <option >03:30 pm</option>
+        <option >04:00 pm</option>
+        <option >04:30 pm</option>
+        <option >05:00 pm</option>
+        <option >05:30 pm</option>
+        <option >06:00 pm</option>
+        <option >06:30 pm</option>
+        <option >07:00 pm</option>
+        <option >07:30 pm</option>
+        <option >08:00 pm</option>
+        <option >08:30 pm</option>
+        <option >09:00 pm</option>
+        <option >09:30 pm</option>
+        <option >10:00 pm</option>
+        <option >10:30 pm</option>
+        <option >11:00 pm</option>
+        <option >11:30 pm</option>
+
+    </select>
+</div>
+
+
+
+<div style="clear:both;">&nbsp;</div>
+
+<div style="float:left;">
+  End Date (Required)
+  <input id="endDate" name="endDate"  type="date" required/>
+</div>
+
+
+<div style="float:left;">
+  End Time (Required)
+  <select id="endTime" name = "endTime" type= "text" >
+      <option >12:00 am</option>
+      <option >12:30 am</option>
+      <option >1:00 am</option>
+      <option >1:30 am</option>
+      <option >2:00 am</option>
+      <option >2:30 am</option>
+      <option >3:00 am</option>
+      <option >3:30 am</option>
+      <option >4:00 am</option>
+      <option >4:30 am</option>
+      <option >5:00 am</option>
+      <option >5:30 am</option>
+      <option >6:00 am</option>
+      <option >6:30 am</option>
+      <option >7:00 am</option>
+      <option >7:30 am</option>
+      <option >8:00 am</option>
+      <option >8:30 am</option>
+      <option >9:00 am</option>
+      <option >9:30 am</option>
+      <option >10:00 am</option>
+      <option >10:30 am</option>
+      <option >11:00 am</option>
+      <option >11:30 am</option>
+      <option >12:00 pm</option>
+      <option >12:30 pm</option>
+      <option >01:00 pm</option>
+      <option >01:30 pm</option>
+      <option >02:00 pm</option>
+      <option >02:30 pm</option>
+      <option >03:00 pm</option>
+      <option >03:30 pm</option>
+      <option >04:00 pm</option>
+      <option >04:30 pm</option>
+      <option >05:00 pm</option>
+      <option >05:30 pm</option>
+      <option >06:00 pm</option>
+      <option >06:30 pm</option>
+      <option >07:00 pm</option>
+      <option >07:30 pm</option>
+      <option >08:00 pm</option>
+      <option >08:30 pm</option>
+      <option >09:00 pm</option>
+      <option >09:30 pm</option>
+      <option >10:00 pm</option>
+      <option >10:30 pm</option>
+      <option >11:00 pm</option>
+      <option >11:30 pm</option>
+  </select>
+</div>
+
+<div style="clear:both;">&nbsp;</div>
+
+
+
+
+<fieldset> Additional Information (Required)
+  <textarea name="additional"  placeholder="Type your message here...." tabindex="5" required></textarea>
+</fieldset>
+
+                    
+            <div class="file-field input-field"  > 
+              <div class="btn BLUE">
+                <span>Click to Upload Image (if no file choosen, our default image will be use) </span>
+                <input name="MyImage" type="file">
+              </div>
+             
+            </div>
+
+              
+            <button type="submit" class="btn">Submit</button>
+
+        
+
+        </form>
+  </div>
+   
+  <footer>
+
+
+    <p> PartiFest, Copyright &copy; 2019</p>
+
+
+</footer>
+<script></script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+  

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Affordable and professional web design">
+	<meta name="keywords" content="web design, affordable web design, professional web design">
+  	<meta name="author" content="Brad Traversy">
+    <title>Niggas News Party | Welcome</title>
+    <link rel="stylesheet" type="text/css" href="/css/styly.css" />
+    <link rel="stylesheet" type="text/css" media="screen and (max-width: 1200px) " href="/css/styly.css" />
+    <link rel="stylesheet" type="text/css" media="screen and (min-width: 990px) " href="/css/styly.css" />
+
+
+</head>
+<body>
+    
+<header>
+    <div class="container">
+        <div id="branding">
+            <h4> <span class="highlight">PartiFest</span> </h4>
+        </div>
+    </div>
+</header>
+
+<% include ./navlogin %>
+
+<section id="newsletter">
+    <div class="container">
+      <h4>Search For Events</h4>
+      <form action="/search"  autocomplete="off">
+            <input id="city" type="text" name="city" placeholder='Type City of Choice'>
+            <input type="date" placeholder="Choose Date" name =date onchange="this.className=(this.value!=''?'has-value':'')">
+
+            <button type="submit" class="searchButton">
+        <i class="fa fa-search"></i>
+     </button>
+      </form>
+    </div>
+</section>
+
+<hr>
+
+<section class="gallery">	
+ 
+		<div class="prices">
+
+            <% party.forEach(function(item) { %>
+                <div class="img">
+                <img src="/<%= item.image %>" alt="image" >
+                <div class="description">    
+                        <h2><%= item.party_name %></h2>
+                        <h6>Host: <%= item.full_name %></h6>
+                        <h3>Price: <%= item.price %></h3>
+                      
+                   
+                 </div>
+                </div>
+        
+
+            <div class="imge">    
+              
+               <h1> Location </h1>
+      
+                <h5> <%= item.address %>, <%= item.city_name %> </h5>
+                <hr>
+                <h1> Date and Time </h1>
+          
+                <h6><%= moment(item.startDate).format("ddd") %>, <%= moment(item.startDate).format("MMMM")%>, <%= moment(item.startDate).format("D")%>, <%= moment(item.startDate).format("YYYY") %>  </h6>
+                <h6><%= item.startTime %> - <%= item.endTime %></h6>
+           
+               
+                <hr>
+              <h1>  Description </h1>
+         
+              <h2> <%= item.aditional %> </h2>
+            
+            
+                            
+             
+
+
+       
+            <% }); %>   
+        </div>
+    </div>
+ 
+
+
+
+</section>
+
+
+
+
+<footer>
+
+
+    <p> PartiFest, Copyright &copy; 2019</p>
+
+
+</footer>
+
+
+    
+</body>
+</html>
