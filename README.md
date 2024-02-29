@@ -24,4 +24,4 @@ To get a local copy of the project up and running, follow these steps:
 
 2. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-username/event-management.git
+  https://github.com/nemosolution17/event-management.git
